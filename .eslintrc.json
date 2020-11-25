@@ -1,0 +1,26 @@
+{
+  "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module",
+      "ecmaFeatures": {
+          "jsx": true,
+          "spread": true,
+          "experimentalObjectRestSpread": true
+      }
+  },
+  "extends": ["eslint:recommended", "plugin:jest/recommended"],
+  "rules": {
+      "semi": 2,
+      "eqeqeq": ["warn", "smart"],
+      "no-unused-vars": 1,
+      "no-console": 0,
+      "no-prototype-builtins": "off"
+  },
+  "plugins": [
+      "jest"
+  ],
+  "env": {
+      "node": true,
+      "es6": true
+  }
+}
