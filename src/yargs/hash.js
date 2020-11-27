@@ -15,8 +15,9 @@ exports.builder = (yargs) => {
         boolean: true
       }
     })
-    .epilogue('Hello')
-    .example('copy asdf asdf');
+    .version(false)
+    .example(`${yargs.$0} hash myfile.txt`)
+    .example(`${yargs.$0} sha256 -c myfile.txt`);
 };
 
 exports.handler = async function (argv) {

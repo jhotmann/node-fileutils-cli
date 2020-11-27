@@ -1,22 +1,11 @@
 const chalk = require('chalk');
 const fs = require('fs-extra');
-const nunjucks = require('nunjucks');
-const os = require('os');
+const nunjucks = require('../util/nunjucks');
 const path = require('path');
 const pathExists = require('path-exists');
 const readlineSync = require('readline-sync');
 
 const { FileData } = require('./fileData');
-
-let env = nunjucks.configure({ autoescape: true, noCache: true });
-const dateFilter = require('../filters/date');
-const customFilters = require('../filters/custom');
-env.addFilter('date', dateFilter);
-Object.keys(customFilters).forEach(f => env.addFilter(f, customFilters[f]));
-if (pathExists.sync(os.homedir() + '/.fu/userFilters.js')) {
-  let userFilters = require(os.homedir() + '/.fu/userFilters.js');
-  Object.keys(userFilters).forEach(f => env.addFilter(f, userFilters[f]));
-}
 
 module.exports.Operation = class Operation {
   constructor(input, options, sequelize) {

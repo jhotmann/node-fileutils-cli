@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const database = require('../util/database');
+const util = require('../util/util');
 
 const { MoveOptions } = require('../move/MoveOptions');
 const { MoveBatch } = require('../move/MoveBatch');
@@ -19,8 +20,9 @@ const moveOptions = {
 exports.builder = (yargs) => {
   yargs
     .options(Object.assign(commonOptions, moveOptions))
-    .epilogue('Hello')
-    .example('move asdf asdf');
+    .version(false)
+    .epilogue('Variables:\n\n' + util.getVariableList())
+    .example('$0 *.txt "archive/{{date.now|date}}-{{f}}" --createdirs');
 };
 
 exports.handler = async function (argv) {
