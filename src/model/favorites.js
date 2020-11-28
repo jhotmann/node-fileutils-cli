@@ -7,7 +7,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     command: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      get() { return JSON.parse(this.getDataValue('command')); },
+      set(value) { this.setDataValue('command', Array.isArray(value) ? JSON.stringify(value) : value); }
     },
     alias: {
       type: DataTypes.TEXT,

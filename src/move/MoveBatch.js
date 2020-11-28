@@ -14,7 +14,7 @@ module.exports.MoveBatch = class MoveBatch extends Batch {
 
   async execute() {
     if (!this.options.simulate && !this.options.noUndo) { // create a batch in the database
-      let batch = this.sequelize.models.Batch.build({ type: this.type, command: JSON.stringify(this.command), cwd: process.cwd() });
+      let batch = this.sequelize.models.Batch.build({ type: this.type, undoable: true, command: this.command, cwd: process.cwd() });
       await batch.save();
       this.batchId = batch.id;
     }

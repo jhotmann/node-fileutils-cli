@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        isIn: [['move', 'copy']]
+        isIn: [['move', 'copy', 'extract', 'link', 'open', 'download']]
       }
     },
     input: {

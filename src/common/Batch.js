@@ -3,7 +3,7 @@ const util = require('../util/util');
 
 module.exports.Batch = class Batch {
   constructor(argv, sequelize) {
-    this.command = process.argv;
+    this.command = process.argv.slice(2);
     this.argv = argv;
     this.sequelize = sequelize;
     this.batchId;
