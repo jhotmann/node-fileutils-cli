@@ -39,6 +39,7 @@
     "inquirer": "^7.1.0",
     "jpeg-exif": "^1.1.4",
     "mp3tag.js": "^2.2.0",
+    "normalize-path": "^3.0.0",
     "num2fraction": "^1.2.2",
     "nunjucks": "^3.2.2",
     "open": "^7.3.0",

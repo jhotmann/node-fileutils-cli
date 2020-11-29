@@ -4,9 +4,10 @@ const { FileData } = require('../common/FileData');
 module.exports = {};
 
 module.exports.leftPad = function(input, desiredLength, padChar) {
-  let totString = '' + desiredLength;
+  padChar = padChar || ' ';
+  if (typeof desiredLength === 'string') desiredLength = desiredLength.length;
   let returnString = '' + input;
-  while (returnString.length < totString.length) {
+  while (returnString.length < desiredLength) {
     returnString = padChar + returnString;
   }
   return returnString;

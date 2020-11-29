@@ -55,7 +55,7 @@ module.exports.Batch = class Batch {
             await filteredOps[i].setIndex('');
             filteredOps[i].setConflict(true);
           } else { // set the index to avoid a conflict
-            await filteredOps[i].setIndex(util.leftPad(i + 1, filteredOps.length, '0'));
+            await filteredOps[i].setIndex(util.leftPad(i + 1, `${filteredOps.length}`, '0'));
           }
         }
       }

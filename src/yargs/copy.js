@@ -1,5 +1,5 @@
 module.exports.command = 'copy [input-files-and-destination..]';
-module.exports.aliases = ['cpy'];
+module.exports.aliases = ['c', 'cp', 'cpy'];
 module.exports.describe = 'copy one or more files to the destination pattern';
 
 const commonOptions = require('../common/yargs-options');

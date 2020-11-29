@@ -2,7 +2,7 @@ const decompress = require('decompress');
 const path = require('path');
 
 module.exports.command = 'extract <file> [output-directory]';
-module.exports.aliases = ['unzip', 'gunzip', 'tar'];
+module.exports.aliases = ['e', 'unzip', 'gunzip', 'tar'];
 module.exports.describe = 'Extract the specified archive';
 
 exports.builder = (yargs) => {
