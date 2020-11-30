@@ -1,13 +1,13 @@
 const { format } = require('date-fns');
 const fs = require('fs-extra');
+const normalize = require('normalize-path');
 const path = require('path');
 
 module.exports.ListOperation = class ListOperation {
   constructor(pathObj) {
     this.name = pathObj.name;
-    this.path = pathObj.path.replace(`${process.cwd()}${path.sep}`, '');
+    this.path = pathObj.path.replace(`${normalize(process.cwd())}/`, '');
     this.ext = path.parse(pathObj.path)?.ext.replace('.', '') || '';
-    console.log('ext: ' + this.ext);
     this.bytes = pathObj?.stats?.size ?? 0;
     this.size = humanReadableSize(this.bytes);
     this.isFile = pathObj?.dirent?.isFile() ?? true;
@@ -78,4 +78,5 @@ function humanReadableSize(bytes) {
       return `${size}${digits}`;
     }
   }
+  return '0B';
 }
