@@ -39,12 +39,21 @@ module.exports.History = class History {
     if (cls) clear();
     cwd = (cwd || process.cwd()) + path.sep;
     await async.eachSeries(ops, async (o) => {
-      if (this.options.verbose) console.log(`${o.output.replace(cwd, '')} → ${o.input.replace(cwd, '')}`);
       const fileExists = await fs.pathExists(o.output);
       if (!fileExists) {
         console.log(`${o.output} no longer exists`);
       } else {
-        await fs.rename(o.output, o.input);
+        switch(o.type) {
+          case 'move': {
+            if (this.options.verbose) console.log(`Moving ${o.output.replace(cwd, '')} → ${o.input.replace(cwd, '')}`);
+            await fs.rename(o.output, o.input);
+            break;
+          }
+          default: {
+            if (this.options.verbose) console.log(`Deleting ${o.output.replace(cwd, '')}`);
+            await fs.unlink(o.output);
+          }
+        }
         o.undone = true;
         await o.save();
       }
@@ -182,7 +191,7 @@ module.exports.History = class History {
     const selectedBatch = this.batches[index];
     const workingDir = selectedBatch.cwd + path.sep;
     clear();
-    console.log(util.argvToString(JSON.parse(selectedBatch.command)));
+    console.log(selectedBatch.commandString);
     let choices = await async.mapSeries(selectedBatch.Ops, async (o) => {
       return {
         name: `${o.input.replace(workingDir, '')} → ${o.output.replace(workingDir, '')}`,
