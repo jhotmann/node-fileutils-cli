@@ -50,5 +50,5 @@ exports.builder = (yargs) => {
 
 exports.handler = async function (argv) {
   let batch = new ListBatch(argv);
-  await batch.resolvePaths();
+  await batch.execute();
 };

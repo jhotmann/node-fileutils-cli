@@ -18,20 +18,9 @@ module.exports.ListBatch = class ListBatch {
     this.resolvedPaths = [];
   }
 
-  async resolvePaths() {
-    this.paths = await async.mapSeries(this.argv.paths || ['.'], async (p) => { return normalize(p); });
-    // Glob(s) to array of matching files
-    this.resolvedPaths = await globby(this.paths, {
-      onlyFiles: false,
-      absolute: true,
-      stats: true,
-      caseSensitiveMatch: this.options.caseSensitive,
-      dot: true,
-      deep: this.options.recursive ? this.options.recursive : 1
-    });
-    // matching files to array of ListOperation(s)
+  async execute() {
+    await this.resolvePaths();
     await this.buildOperations();
-    // calculate directory size if specified
     await this.caluclateDirectorySizes();
     // pad sizes so they right align nicely
     const maxSize = [...this.operations].sort((a, b) => {
@@ -41,10 +30,39 @@ module.exports.ListBatch = class ListBatch {
     })[0].size.length;
     // sort files
     await this.sortOperations();
-    // print to console
-    await async.eachSeries(this.operations, async (o) => {
-      o.setSize(util.leftPad(o.size, maxSize));
-      await o.print();
+    // get list of unique parent directories
+    const parents = [...new Set(this.operations.map(o => o.parent))];
+    if (parents.length < 2) {
+      // print to console
+      await async.eachSeries(this.operations, async (o) => {
+        o.setSize(util.leftPad(o.size, maxSize));
+        await o.print();
+      });
+    } else {
+      // group by parent directory and print
+      await async.eachSeries(parents, async (p) => {
+        const filtered = this.operations.filter(o => o.parent === p);
+        if (p === process.cwd()) console.log('.:');
+        else console.log(`${p.replace(`${normalize(process.cwd())}/`, '')}/:`);
+        await async.eachSeries(filtered, async (o) => {
+          o.setSize(util.leftPad(o.size, maxSize));
+          await o.print();
+        });
+        console.log();
+      });
+    }
+  }
+
+  async resolvePaths() {
+    this.paths = await async.mapSeries(this.argv.paths || ['.'], async (p) => { return normalize(p); });
+    // glob(s) to array of matching files
+    this.resolvedPaths = await globby(this.paths, {
+      onlyFiles: false,
+      absolute: true,
+      stats: true,
+      caseSensitiveMatch: this.options.caseSensitive,
+      dot: true,
+      deep: this.options.recursive ? this.options.recursive : 1
     });
   }
 
@@ -72,6 +90,4 @@ module.exports.ListBatch = class ListBatch {
     }
     if (this.options.reverse) this.operations.reverse();
   }
-
-  async execute() {}
 };

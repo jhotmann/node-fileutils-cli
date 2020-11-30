@@ -122,3 +122,4 @@ dist
 
 # testing directory
 test
+!src/test

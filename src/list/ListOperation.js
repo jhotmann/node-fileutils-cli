@@ -8,10 +8,12 @@ const util = require('../util/util');
 
 module.exports.ListOperation = class ListOperation {
   constructor(pathObj) {
+    const parsedPath = path.parse(pathObj.path);
     this.name = pathObj.name;
     this.fullPath = pathObj.path;
     this.path = pathObj.path.replace(`${normalize(process.cwd())}/`, '');
-    this.ext = path.parse(pathObj.path)?.ext.replace('.', '') || '';
+    this.ext = parsedPath?.ext?.replace('.', '') || '';
+    this.parent = parsedPath?.dir ?? process.cwd();
     this.bytes = pathObj?.stats?.size ?? 0;
     this.size = util.humanReadableSize(this.bytes);
     this.isFile = pathObj?.dirent?.isFile() ?? true;
