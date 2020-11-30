@@ -6,7 +6,7 @@ const { MoveOptions } = require('../move/MoveOptions');
 const { MoveBatch } = require('../move/MoveBatch');
 
 module.exports.command = 'move [input-files-and-destination..]';
-module.exports.aliases = ['m', 'r', 'mv', 'rename', 'rname'];
+module.exports.aliases = ['m', 'mv', 'rename', 'rname'];
 module.exports.describe = 'Move one or more files to the destination pattern';
 
 const commonOptions = require('../common/yargs-options');
