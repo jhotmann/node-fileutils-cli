@@ -11,7 +11,8 @@ module.exports.ListBatch = class ListBatch {
     this.options = {
       reverse: argv.reverse || false,
       recursive: argv.hasOwnProperty('recursive') ? argv.recursive || 3 : false,
-      caseSensitive: !(argv.ignoreCase || false)
+      caseSensitive: !(argv.ignoreCase || false),
+      calculateDirectorySize: argv.ds
     };
     this.paths = [];
     this.resolvedPaths = [];
@@ -19,6 +20,7 @@ module.exports.ListBatch = class ListBatch {
 
   async resolvePaths() {
     this.paths = await async.mapSeries(this.argv.paths || ['.'], async (p) => { return normalize(p); });
+    // Glob(s) to array of matching files
     this.resolvedPaths = await globby(this.paths, {
       onlyFiles: false,
       absolute: true,
@@ -27,23 +29,31 @@ module.exports.ListBatch = class ListBatch {
       dot: true,
       deep: this.options.recursive ? this.options.recursive : 1
     });
+    // matching files to array of ListOperation(s)
     await this.buildOperations();
+    // calculate directory size if specified
+    await this.caluclateDirectorySizes();
+    // pad sizes so they right align nicely
     const maxSize = [...this.operations].sort((a, b) => {
       if (a.size && a.size.length && b.size && b.size.length) {
         return b.size.length - a.size.length;
       } else return 0;
     })[0].size.length;
+    // sort files
     await this.sortOperations();
+    // print to console
     await async.eachSeries(this.operations, async (o) => {
       o.setSize(util.leftPad(o.size, maxSize));
       await o.print();
     });
   }
 
-  async getDirectoryCount() {}
-
   async buildOperations() {
     this.operations = this.resolvedPaths.map(p => { return new ListOperation(p); });
+  }
+
+  async caluclateDirectorySizes() {
+    if (this.options.calculateDirectorySize) await async.eachSeries(this.operations, async (o) => { await o.getDirectorySize(); });
   }
 
   async sortOperations() {

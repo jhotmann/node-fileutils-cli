@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const os = require('os');
 const yargs = require('yargs');
 
+const packageJson = require('../package.json');
+
 module.exports = async (argv) => {
   // create ~/.fu/userData.js if not exist
   const userDataPath = os.homedir() + '/.fu/userData.js';
@@ -18,7 +20,10 @@ module.exports = async (argv) => {
     await fs.copyFile(__dirname + '/../lib/userFilters.js', userFiltersPath);
   }
 
+  if (argv.length === 0) argv = ['help'];
+
   yargs(argv)
+    .usage(`FileUtils v${packageJson.version}\n\nUsage:\n  $0 <command>`)
     .commandDir('./yargs')
     .help('help')
     .wrap(yargs.terminalWidth())

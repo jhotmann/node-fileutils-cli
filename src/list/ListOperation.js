@@ -2,19 +2,30 @@ const { format } = require('date-fns');
 const fs = require('fs-extra');
 const normalize = require('normalize-path');
 const path = require('path');
+const trammel = require('trammel');
+
+const util = require('../util/util');
 
 module.exports.ListOperation = class ListOperation {
   constructor(pathObj) {
     this.name = pathObj.name;
+    this.fullPath = pathObj.path;
     this.path = pathObj.path.replace(`${normalize(process.cwd())}/`, '');
     this.ext = path.parse(pathObj.path)?.ext.replace('.', '') || '';
     this.bytes = pathObj?.stats?.size ?? 0;
-    this.size = humanReadableSize(this.bytes);
+    this.size = util.humanReadableSize(this.bytes);
     this.isFile = pathObj?.dirent?.isFile() ?? true;
     this.isDirectory = pathObj?.dirent?.isDirectory() ?? false;
     this.isLink = pathObj?.dirent?.isSymbolicLink() ?? false;
     this.mdate = pathObj?.stats?.mtime ?? new Date();
     this.mtimeMs = pathObj?.stats?.mtimeMs ?? 0;
+  }
+
+  async getDirectorySize() {
+    if (this.isDirectory) {
+      this.bytes = await trammel(this.fullPath, {type: 'raw'});
+      this.size = util.humanReadableSize(this.bytes);
+    }
   }
 
   setSize(paddedSize) {
@@ -51,32 +62,8 @@ module.exports.ListOperation = class ListOperation {
     text += this.size;
     text += '  ';
     text += format(this.mdate, 'MMM dd hh:mm');
-    text += ' ';
+    text += '  ';
     text += this.path;
     console.log(text);
   }
 };
-
-function humanReadableSize(bytes) {
-  for (let i = 3; i > -1; i--) {
-    if (bytes / Math.pow(1024, i) > 1) {
-      let size = `${(bytes / Math.pow(1024, i)).toFixed(1)}`.replace(/\.0+$/, '');
-      let digits;
-      switch (i) {
-        case 3:
-          digits = 'G';
-          break;
-        case 2:
-          digits = 'M';
-          break;
-        case 1:
-          digits = 'K';
-          break;
-        default:
-          digits = 'B';
-      }
-      return `${size}${digits}`;
-    }
-  }
-  return '0B';
-}

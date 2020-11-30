@@ -35,6 +35,12 @@ exports.builder = (yargs) => {
       'ignore-case': {
         boolean: true,
         describe: 'Ignore case with your supplied paths'
+      },
+      'calculate-directory-size': {
+        alias: 'ds',
+        boolean: true,
+        default: false,
+        describe: 'Recursively calculate the size of all files within a directory'
       }
     })
     .version(false)

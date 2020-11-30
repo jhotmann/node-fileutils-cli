@@ -57,6 +57,30 @@ module.exports.getVariableList = function () {
   }).filter(v => v !== undefined).join('\n\n');
 };
 
+module.exports.humanReadableSize = (bytes) => {
+  for (let i = 3; i > -1; i--) {
+    if (bytes / Math.pow(1024, i) > 1) {
+      let size = `${(bytes / Math.pow(1024, i)).toFixed(1)}`.replace(/\.0+$/, '');
+      let digits;
+      switch (i) {
+        case 3:
+          digits = 'G';
+          break;
+        case 2:
+          digits = 'M';
+          break;
+        case 1:
+          digits = 'K';
+          break;
+        default:
+          digits = 'B';
+      }
+      return `${size}${digits}`;
+    }
+  }
+  return '0B';
+};
+
 function escapeText(theString) {
   if (theString.indexOf(' ') > -1 || theString.indexOf('|') > -1) {
     return '"' + theString + '"';
