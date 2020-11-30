@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         return this.command.join(' ');
       },
       set(value) {
-        throw new Error('Do not try to set the `commandString` value!');
+        throw new Error(`Do not try to set the 'commandString' value! ${value}`);
       }
     },
     cwd: {

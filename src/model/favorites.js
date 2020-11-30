@@ -11,6 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       get() { return JSON.parse(this.getDataValue('command')); },
       set(value) { this.setDataValue('command', Array.isArray(value) ? JSON.stringify(value) : value); }
     },
+    commandString: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return this.command.join(' ');
+      },
+      set(value) {
+        throw new Error(`Do not try to set the 'commandString' value! ${value}`);
+      }
+    },
     alias: {
       type: DataTypes.TEXT,
       allowNull: true,

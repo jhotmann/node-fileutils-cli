@@ -5,7 +5,6 @@ const os = require('os');
 const term = require('terminal-kit').terminal;
 
 const fu = require('../fu');
-const util = require('../util/util');
 
 module.exports.Favorites = class Favorites {
   constructor(sequelize, options) {
@@ -18,7 +17,7 @@ module.exports.Favorites = class Favorites {
     clear();
     let choices = await async.mapSeries(this.allFavorites, async (f) => {
       return {
-        name: `${f.id}: ${util.argvToString(JSON.parse(f.command))}${ f.alias ? ` (${f.alias})` : ''}`,
+        name: `${f.id}: ${f.commandString}${ f.alias ? ` (${f.alias})` : ''}`,
         value: f.id
       };
     });

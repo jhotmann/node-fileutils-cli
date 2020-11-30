@@ -6,11 +6,15 @@ module.exports.ListOperation = class ListOperation {
   constructor(pathObj) {
     this.name = pathObj.name;
     this.path = pathObj.path.replace(`${process.cwd()}${path.sep}`, '');
-    this.size = humanReadableSize(pathObj.stats.size);
-    this.isFile = pathObj.dirent.isFile();
-    this.isDirectory = pathObj.dirent.isDirectory();
-    this.isLink = pathObj.dirent.isSymbolicLink();
-    this.mdate = pathObj.stats.mtime;
+    this.ext = path.parse(pathObj.path)?.ext.replace('.', '') || '';
+    console.log('ext: ' + this.ext);
+    this.bytes = pathObj?.stats?.size ?? 0;
+    this.size = humanReadableSize(this.bytes);
+    this.isFile = pathObj?.dirent?.isFile() ?? true;
+    this.isDirectory = pathObj?.dirent?.isDirectory() ?? false;
+    this.isLink = pathObj?.dirent?.isSymbolicLink() ?? false;
+    this.mdate = pathObj?.stats?.mtime ?? new Date();
+    this.mtimeMs = pathObj?.stats?.mtimeMs ?? 0;
   }
 
   setSize(paddedSize) {
