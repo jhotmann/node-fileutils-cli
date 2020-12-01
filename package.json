@@ -34,6 +34,7 @@
     "clipboardy": "^2.2.0",
     "date-fns": "^2.16.1",
     "decompress": "^4.2.1",
+    "download": "^8.0.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.0",
     "inquirer": "^7.1.0",
