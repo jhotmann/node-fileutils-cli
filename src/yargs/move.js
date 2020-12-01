@@ -12,6 +12,7 @@ module.exports.describe = 'Move one or more files to the destination pattern';
 const commonOptions = require('../common/yargs-options');
 const moveOptions = {
   'nomove': {
+    alias: 'no-move',
     boolean: true,
     describe: 'Do not move files if their new file path points to a different directory'
   }

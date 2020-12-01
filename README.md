@@ -1,7 +1,7 @@
 # **WIP** FileUtils-CLI **WIP**
-A cross-platform collection of tools for file interactions
+A cross-platform collection of command line tools for file interactions
 
-This project is the continuation of [node-rename-cli](https://github.com/jhotmann/node-rename-cli) to provide powerful, file-interaction tools with a unified syntax across platforms.
+This project is the continuation of [Rename-CLI](https://github.com/jhotmann/node-rename-cli) to provide powerful, file-interaction tools with a unified syntax across platforms.
 
 ### Features
 - Variable replacement and filtering (powered by [Nunjucks](https://mozilla.github.io/nunjucks/templating.html))
@@ -16,75 +16,223 @@ This project is the continuation of [node-rename-cli](https://github.com/jhotman
 
 | Command | Alias(es) | Description |
 | ----- | ----- | ----- |
-| [copy](#copy-usage) | c, cp, cpy | copy one or more files/directories to a destination (with variable support) |
-| download | d, dl, get | download a file from the internet (with variable support) |
-| extract | e, unzip, gunzip, tar | extract zip, tar, gzip, and bzip archives |
-| favorites | f, favourites | run, view, and edit favorited commands |
-| hash | md5, sha1, sha256, sha512 | get the hash of one or more files (use the appropriate alias for the algorithm you need) |
-| help |  | view help (works with individual commands as well) |
-| history | h | view, undo, re-run, copy, and favorite past commands |
-| link | l, ln, mklink | create soft or hard links to one or more files (with variable support) |
-| move | m, mv, r, rename | move/rename one or more files/directories (with variable support) |
-| open | o, launch, start | open files in their default application or an application of your choice |
-| undo | u | undo the last undoable command that hasn't already been undone |
+| [copy](#copy) | c, cp, cpy | copy one or more files/directories to a destination (with variable support) |
+| [download](#download) | d, dl, get | download a file from the internet (with variable support) |
+| [extract](#extract) | e, unzip, gunzip, tar | extract zip, tar, gzip, and bzip archives |
+| [favorites](#favorites) | f, favourites | run, view, and edit favorited commands |
+| [hash](#hash) | md5, sha1, sha256, sha512 | get the hash of one or more files (use the appropriate alias for the algorithm you need) |
+| help | | view help (works with individual commands as well) |
+| [history](#history) | h | view, undo, re-run, copy, and favorite past commands |
+| [link](#link) | l, ln, mklink | create soft or hard links to one or more files (with variable support) |
+| [move](#move) | m, mv, r, rename | move/rename one or more files/directories (with variable support) |
+| [open](#open) | o, launch, start | open files in their default application or an application of your choice |
+| [undo](#undo) | u | undo the last undoable command that hasn't already been undone |
 
 *To save yourself some keystrokes, the `fileutils` command can also be run via the `fu` alias. Additionally, shortcuts to the move and copy commands are created: `rname`, `rename`, and `cpy`. These allow you to bypass the need to type `fu` or `fileutils` to run those commands.*
 
 ## Installation
 TODO
 
-## Copy Usage
+## Copy
+Copy one or more files/directories with variable support.
 
-## Download Usage
+### Usage
+`fileutils copy [options] [input-files..] [destination]`
 
-## Extract Usage
+Or specify no options to launch an interactive terminal interface with live previews of the output(s) of your command.
 
-## Favorites Usage
+*Note: when you install FileUtils, an alias will be created that directly run the copy command. This alias is `cpy`, so you can simply type `cpy [options] [inputfiles..] [destination]` without needing to specify `fileutils` first.*
 
-## Hash Usage
+To further save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
 
-## History Usage
+### Options
+`-f`, `--force`: Forcefully overwrite existing files and create missing directories  
+`-s`, `--sim`, `--dry-run`: Simulate and print operations without actually moving any files  
+`-n`, `--no-index`: Do not automatically append an index when multiple operations result in the same destination path  
+`-k`, `--keep`: Append a number to destination file name if the file already exists  
+`-d`, `--ignore-dirs`: Do not move/rename directories  
+`--sort`: Sort files before running operations. Choices: `none` (default), `alphabet`, `reverse-alphabet`, `date-create`, `reverse-date-create`, `date-modified`, `reverse-date-modified`, `size`, `reverse-size`  
+`-v`, `--verbose`: Verbose logging  
+`--no-trim`: Do not trim whitespace at beginning or end of destination file names  
+`--no-ext`: Do not automatically append the original file extension if an extension isn't supplied  
+`--create-dirs`: Automatically create missing directories  
+`--no-undo`: Don't write to command history   
 
-## Link Usage
+### Built-in Variables
+`{{i}}` - Override where the file index will go if there are multiple files being named the same name. By default, it is appended to the end of the file name.  
+`{{f}}` - The original name of the file. Alias: `fileName`  
+`{{ext}}` - The original file extension of the file  
+`{{isDirectory}}` - `true` if the current input is a directory, `false` otherwise  
+`{{p}}` - The name of the parent directory. Alias: `parent`  
+`{{date.current}}` - The current date/time. Alias: `date.now`  
+`{{date.create}}` - The date/time the file was created  
+`{{date.modify}}` - The date/time the file was last modified  
+`{{date.access}}` - The date/time the file was last accessed  
+`{{os.homedir}}` - The path to the current user's home directory  
+`{{os.platform}}` - The operating system platform: `darwin`, `linux`, or `windows`  
+`{{os.user}}` - The username of the current user  
+`{{guid}}` - A pseudo-random GUID  
+`{{stats}}` - All the input file's stats https://nodejs.org/api/fs.html#fs_class_fs_stats  
+`{{parsedPath}}` - The input file's parsed path https://nodejs.org/api/path.html#path_path_parse_path  
+`{{exif.iso}}` - The ISO sensitivity of the camera when the photo was taken  
+`{{exif.fnum}}` - The F-stop number of the camera when the photo was taken  
+`{{exif.exposure}}` - The exposure time of the camera when the photo was taken. Use the fraction filter to convert decimals to fractions  
+`{{exif.date}}` - The date on the camera when the photo was taken  
+`{{exif.width}}` - The pixel width of the photo  
+`{{exif.height}}` - The pixel height of the photo  
+`{{id3.title}}` - The title of the song  
+`{{id3.artist}}` - The artist of the song  
+`{{id3.album}}` - The album of the song  
+`{{id3.year}}` - The year of the song  
+`{{id3.track}}` - The track number of the song  
+`{{id3.totalTracks}}` - The number of tracks on the album  
 
-## Move Usage
+See [Filters and Examples](#filters-and-examples) for some examples of how to use filters and variables.
 
-## Open Usage
+-----
 
-## Undo Usage
+## Download
+Download a file from the internet.
 
-## Built-in Variables
-<details><summary>Commands with variable support allow the destination to contain any number of built-in and custom variables that will be replaced with their corresponding value. Expand for more info.</summary>
-<p>
+### Usage
+`fileutils download <url> [output path]`
 
- `{{i}}` Index: The index of the file when renaming multiple files to the same name. If you do no include `{{i}}` in your new file name, the index will be appended to the end. Use the `--noindex` option to prevent auto-indexing.
+If no output path is specified, the file will be downloaded to the current directory and the file name guessed from the URL.
 
- `{{f}}` File name: The original name of the file.
+### Options
+`-t`, `--tries` - Number of retries (defaults to 20). To disable retries, set to 0  
+`--max-redirect`, `--max-redirects` - The maximum number of redirections to follow for a resource (defaults to 20)  
+`-q`, `--quiet` - Turn off logging and progress bar  
+`-v`, `--verbose` - Verbose logging  
 
- `{{ext}}` File extension: The original extension of the file (with the `.`)
+### Variables
+`{{f}}` - The original name of the file. Alias: `fileName`  
+`{{ext}}` - The original file extension of the file  
+`{{date.current}}` - The current date/time. Alias: `date.now`  
+`{{os.homedir}}` - The path to the current user's home directory  
+`{{os.platform}}` - The operating system platform: `darwin`, `linux`, or `windows`  
+`{{os.user}}` - The username of the current user  
+`{{guid}}` - A pseudo-random GUID
 
- `{{p}}` Parent directory: The name of the parent directory.
+-----
 
- `{{isDirectory}}` Is directory: true/false. Useful for conditionally adding a file extension to files and not directories with `{% if isDirectory %}...`
+## Extract
+### Usage
+`fileutils extract ...`
 
- `{{os.x}}` Operating System: Information about the OS/user. Replace `x` with `homedir`, `hostname`, `platform`, or `user`
+### Options
 
- `{{date.x}}` Dates: Insert a date. Replace `x` with `current` (the current date/time), `create` (the file's created date/time), `access` (the file's last accessed date/time) or `modify` (the file's last modified date/time)
+-----
 
- `{{g}}` GUID: A pseudo-random globally unique identifier.
+## Favorites
+Run, view, and edit favorited commands.
 
- `{{exif.x}}` EXIF: Photo EXIF Information. Replace `x` with `iso`, `fnum`, `exposure`, `date`, `width`, or `height`
+###
+`fileutils favorites [id or alias]`
 
- `{{id3.x}}` ID3: Gets ID3 tags from MP3 files. Replace `x` with `title`, `artist`, `album`, `track`, `totalTracks`, or `year`
+When you specify an ID or alias of a favorite, that command is instantly run. If you don't specify anything, then you will be taken to a terminal UI with your list of favorites to edit, delete, or re-run them.
 
-You can also add your own variables. See the [Customize](#customize) section for more info.
+-----
 
-</p>
-</details>
+## Hash
+### Usage
+`fileutils hash ...`
+
+### Options
+
+-----
+
+## History
+### Usage
+`fileutils history`
+
+### Options
+
+-----
+
+## Link
+### Usage
+`fileutils link ...`
+
+### Options
+
+-----
+
+## Move
+Move/rename one or more files/directories with variable support.
+
+### Usage
+`fileutils move [options] [input-files..] [destination]`
+
+Or specify no options to launch an interactive terminal interface with live previews of the output(s) of your command.
+
+*Note: when you install FileUtils, two aliases will be created that directly run the move command. These aliases are `rname` and `rename`, so you can simply type `rname [options] [inputfiles..] [destination]` without needing to specify `fileutils` first.*
+
+To further save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
+
+### Options
+`-f`, `--force`: Forcefully overwrite existing files and create missing directories  
+`-s`, `--sim`, `--dry-run`: Simulate and print operations without actually moving any files  
+`-n`, `--no-index`: Do not automatically append an index when multiple operations result in the same destination path  
+`-k`, `--keep`: Append a number to destination file name if the file already exists  
+`-d`, `--ignore-dirs`: Do not move/rename directories  
+`--sort`: Sort files before running operations. Choices: `none` (default), `alphabet`, `reverse-alphabet`, `date-create`, `reverse-date-create`, `date-modified`, `reverse-date-modified`, `size`, `reverse-size`  
+`-v`, `--verbose`: Verbose logging  
+`--no-trim`: Do not trim whitespace at beginning or end of destination file names  
+`--no-ext`: Do not automatically append the original file extension if an extension isn't supplied  
+`--create-dirs`: Automatically create missing directories  
+`--no-undo`: Don't write to command history  
+`--no-move`: Do not move files if their new file path points to a different directory  
+
+### Built-in Variables
+`{{i}}` - Override where the file index will go if there are multiple files being named the same name. By default, it is appended to the end of the file name.  
+`{{f}}` - The original name of the file. Alias: `fileName`  
+`{{ext}}` - The original file extension of the file  
+`{{isDirectory}}` - `true` if the current input is a directory, `false` otherwise  
+`{{p}}` - The name of the parent directory. Alias: `parent`  
+`{{date.current}}` - The current date/time. Alias: `date.now`  
+`{{date.create}}` - The date/time the file was created  
+`{{date.modify}}` - The date/time the file was last modified  
+`{{date.access}}` - The date/time the file was last accessed  
+`{{os.homedir}}` - The path to the current user's home directory  
+`{{os.platform}}` - The operating system platform: `darwin`, `linux`, or `windows`  
+`{{os.user}}` - The username of the current user  
+`{{guid}}` - A pseudo-random GUID  
+`{{stats}}` - All the input file's stats https://nodejs.org/api/fs.html#fs_class_fs_stats  
+`{{parsedPath}}` - The input file's parsed path https://nodejs.org/api/path.html#path_path_parse_path  
+`{{exif.iso}}` - The ISO sensitivity of the camera when the photo was taken  
+`{{exif.fnum}}` - The F-stop number of the camera when the photo was taken  
+`{{exif.exposure}}` - The exposure time of the camera when the photo was taken. Use the fraction filter to convert decimals to fractions  
+`{{exif.date}}` - The date on the camera when the photo was taken  
+`{{exif.width}}` - The pixel width of the photo  
+`{{exif.height}}` - The pixel height of the photo  
+`{{id3.title}}` - The title of the song  
+`{{id3.artist}}` - The artist of the song  
+`{{id3.album}}` - The album of the song  
+`{{id3.year}}` - The year of the song  
+`{{id3.track}}` - The track number of the song  
+`{{id3.totalTracks}}` - The number of tracks on the album  
+
+See [Filters and Examples](#filters-and-examples) for some examples of how to use filters and variables.
+
+-----
+
+## Open
+### Usage
+`fileutils open ...`
+
+### Options
+
+-----
+
+## Undo
+### Usage
+`fileutils undo`
+
+-----
 
 ## Filters and Examples
-<details><summary>You can modify variable values by applying filters. Multiple filters can be chained together. Nunjucks, the underlying variable-replacement engine, has a large number of <a href="https://mozilla.github.io/nunjucks/templating.html#builtin-filters">filters available</a> and Rename-CLI has a few of its own. Expand for more info.</summary>
-<p>
+You can modify variable values by applying filters. Multiple filters can be chained together. Nunjucks, the underlying variable-replacement engine, has many <a href="https://mozilla.github.io/nunjucks/templating.html#builtin-filters">filters available</a> and FileUtils has a few of its own. Expand for more info.
 
 String case manipulation
   - `{{f|lower}}` - `Something Like This.txt → something like this.txt`
@@ -164,15 +312,11 @@ Absent Sounds/Search For More.mp3 → 2014/From Indian Lakes/Absent Sounds/09 - 
 Absent Sounds/Sleeping Limbs.mp3 → 2014/From Indian Lakes/Absent Sounds/04 - Sleeping Limbs.mp3
 ```
 
-</p>
-</details>
-
 ## Customize
-<details><summary>You can expand upon and overwrite much of the default functionality by creating your own variables and filters. Expand for more info.</summary>
-<p>
+You can expand upon and overwrite much of the default functionality by creating your own variables and filters. Expand for more info.
 
 ### Variables
-The first time you run the rename command a file will be created at `~/.rename/userData.js`, this file can be edited to add new variables that you can access with `{{variableName}}` in your new file name. You can also override the built-in variables by naming your variable the same. The userData.js file contains some examples.
+The first time you run the rename command a file will be created at `~/.fu/userData.js`, this file can be edited to add new variables that you can access with `{{variableName}}` in your new file name. You can also override the built-in variables by naming your variable the same. The userData.js file contains some examples.
 
 ```js
 // These are some helpful libraries already included in rename-cli
@@ -267,7 +411,7 @@ The `fileObj` that is passed to the function will look something like this:
 ```
 
 ### Filters
-The first time you run the rename command a file will be created at `~/.rename/userFilters.js`, this file can be edited to add new filters that you can access with `{{someVariable | myNewFilter}}` in your new file name.
+The first time you run the rename command a file will be created at `~/.fu/userFilters.js`, this file can be edited to add new filters that you can access with `{{someVariable | myNewFilter}}` in your new file name.
 
 One place custom filters can be really handy is if you have files that you often receive in some weird format and you then convert them to your own desired format. Instead of writing some long, complex new file name, just write your own filter and make the new file name `{{f|myCustomFilterName}}`. You can harness the power of code to do really complex things without having to write a complex command.
 
@@ -295,6 +439,3 @@ module.exports = {
   // }
 };
 ```
-
-</p>
-</details>

@@ -1,22 +1,15 @@
-const chalk = require('chalk');
-const database = require('../util/database');
-const download = require('download');
-const path = require('path');
-const ProgressBar = require('progress');
-const {URL} = require('url');
+const traverse = require('traverse');
 
-module.exports.command = 'download <url> [output-directory]';
+const { DownloadBatch } = require('../download/DownloadBatch');
+const { DownloadData } = require('../download/DownloadData');
+
+module.exports.command = 'download <url> [output-path]';
 module.exports.aliases = ['d', 'dl', 'get'];
 module.exports.describe = 'Extract the specified archive';
 
 exports.builder = (yargs) => {
   yargs
     .options({
-      f: {
-        alias: 'filename',
-        string: true,
-        describe: 'override the file name of the downloaded file'
-      },
       t: {
         alias: 'tries',
         number: true,
@@ -40,48 +33,31 @@ exports.builder = (yargs) => {
       }
     })
     .version(false)
-    .example(`$0 download `, '')
-    .example(`$0 download `, '');
+    .epilogue('Variables:\n\n' + getVariableList())
+    .example(`$0 download https://example.com/rname.exe`)
+    .example(`$0 download https://example.com/rname.exe test/mv.exe`);
 };
 
 exports.handler = async function (argv) {
-  const outDir = argv.outputDirectory ?? '.';
-  let options = {
-    filename: path.basename(new URL(argv.url).pathname),
-    retry: argv.tries,
-    maxRedirects: argv.maxRedirects
-  };
-  if (argv.filename) options.filename = argv.filename;
-  let bar;
-  await download(argv.url, outDir, options)
-    .on('response', res => {
-      if (argv.verbose) console.log(`${res.url} - ${res.statusCode}`);
-      const len = parseInt(res.headers['content-length'], 10) || 0;
-      if (!argv.quiet) {
-        bar = new ProgressBar('  downloading [:bar] :rate/Kbps :percent :etas', {
-          complete: '=',
-          incomplete: ' ',
-          width: 30,
-          total: len/1024
-        });
-      }
-    })
-    .on('downloadProgress', progress => {
-      if (!argv.quiet) bar.update(progress?.percent ?? 1);
-    })
-    .catch(err => {
-      console.log(chalk`{red ${err}}`);
-      process.exit(1);
-    });
-  const fullPath = path.resolve(outDir, options.filename);
-  if (argv.verbose) console.log(fullPath.replace(`${process.cwd()}${path.sep}`, ''));
-  const sequelize = await database.init();
-  let batch = sequelize.models.Batch.build({ type: 'download', undoable: true, command: process.argv.slice(2), cwd: process.cwd() });
-  await batch.save();
-  await sequelize.models.Op.create({
-    type: 'download',
-    input: argv.url,
-    output: fullPath,
-    BatchId: batch.id
-  });
+  let batch = new DownloadBatch(argv);
+  await batch.init();
+  await batch.execute();
 };
+
+function getVariableList() {
+  const tempFileData = new DownloadData('https://example.com/somefile.txt');
+  let defaultVars = tempFileData.getDescriptions();
+  return traverse.paths(defaultVars).map(v => {
+    if (v.length === 1 && typeof defaultVars[v[0]] !== "object") {
+      return '{{' + v[0] + '}}' + ' - ' + defaultVars[v[0]];
+    } else if (v.length > 1) {
+      let p = v.join('.');
+      let value;
+      v.forEach(val => {
+        if (!value) value = defaultVars[val];
+        else value = value[val];
+      });
+      return '{{' + p + '}}' + ' - ' + value;
+    }
+  }).filter(v => v !== undefined).join('\n\n');
+}

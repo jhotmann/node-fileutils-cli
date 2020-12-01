@@ -10,7 +10,7 @@ module.exports = {
     describe: 'Simulate and print operations'
   },
   n: {
-    alias: 'noindex',
+    alias: ['no-index'],
     boolean: true,
     describe: 'Do not append an index when multiple operations result in the same path'
   },
@@ -20,7 +20,7 @@ module.exports = {
     describe: 'Append a number to file name if file already exists'
   },
   d: {
-    alias: 'ignoredirectories',
+    alias: ['ignore-dirs'],
     boolean: true,
     describe: 'Do not operate on directories'
   },
@@ -37,18 +37,22 @@ module.exports = {
     describe: 'Verbose logging'
   },
   'notrim': {
+    alias: 'no-trim',
     boolean: true,
     describe: 'Do not trim whitespace at beginning or end of ouput file names'
   },
   'noext': {
+    alias: 'no-ext',
     boolean: true,
     describe: 'Do not automatically append the original file extension if one isn\'t supplied'
   },
   'createdirs': {
+    alias: 'create-dirs',
     boolean: true,
     describe: 'Automatically create missing directories'
   },
   'noundo': {
+    alias: 'no-undo',
     boolean: true,
     describe: 'Don\'t write to command history'
   }

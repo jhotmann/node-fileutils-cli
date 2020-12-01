@@ -24,8 +24,7 @@ module.exports.Operation = class Operation {
   }
 
   async replaceVariables() {
-    let data;
-    data = await this.fileData.get();
+    let data = await this.fileData.get();
     this.outputString = nunjucks.renderString(this.options.outputPattern, data);
     await this.parseOutputPath();
   }
