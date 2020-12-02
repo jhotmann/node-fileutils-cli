@@ -5,9 +5,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [ master, 7.0.0, history-feature ]
+    branches: [ main ]
   pull_request:
-    branches: [ master, 7.0.0, history-feature ]
+    branches: [ main ]
 
 jobs:
   test_linux:
