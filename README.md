@@ -147,6 +147,8 @@ Get the hash(es) of one or more files.
 ### Usage
 `fileutils hash <files..>`
 
+If you use the hash command, it defaults to an MD5 hash. If you need a different algorithm, use one of the aliases: `sha1`, `sha256`, `sha512`.
+
 ### Options
 `-c`, `--copy` - Copy the hash to the clipboard
 

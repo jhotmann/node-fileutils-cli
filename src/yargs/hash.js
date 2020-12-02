@@ -16,6 +16,7 @@ exports.builder = (yargs) => {
       }
     })
     .version(false)
+    .epilogue('Aliases:\n  Use any of the following aliases in place of the hash command to use that algorithm instead: sha1, sha256, sha512, md5 (default)')
     .example(`${yargs.$0} hash myfile.txt`)
     .example(`${yargs.$0} sha256 -c myfile.txt`);
 };

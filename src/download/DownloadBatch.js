@@ -12,10 +12,15 @@ module.exports.DownloadBatch = class DownloadBatch {
   constructor(argv) {
     this.argv = argv;
     this.type = 'download';
-    this.url = argv.url;
-    this.outPathString = argv.outputPath || path.basename(new URL(argv.url).pathname);
-    this.inputFilePath = path.parse(path.basename(new URL(argv.url).pathname));
-    this.fileData = new DownloadData(this.url);
+    try {
+    this.url = new URL(argv.url);
+    } catch (e) {
+      console.log(chalk`{red Invalid URL}`);
+      process.exit(1);
+    }
+    this.outPathString = argv.outputPath || path.basename(this.url.pathname);
+    this.inputFilePath = path.parse(path.basename(this.url.pathname));
+    this.fileData = new DownloadData(this.url.toString());
     this.progressBar;
   }
 
@@ -38,7 +43,7 @@ module.exports.DownloadBatch = class DownloadBatch {
   }
 
   async execute() {
-    await download(this.argv.url, this.outputFilePath.dir, {
+    await download(this.url.toString(), this.outputFilePath.dir, {
       filename: this.outputFilePath.base,
       retry: this.argv.tries,
       maxRedirects: this.argv.maxRedirects

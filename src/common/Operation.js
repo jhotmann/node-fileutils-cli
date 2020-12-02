@@ -5,7 +5,7 @@ const path = require('path');
 const pathExists = require('path-exists');
 const readlineSync = require('readline-sync');
 
-const { FileData } = require('./fileData');
+const { FileData } = require('./FileData');
 
 module.exports.Operation = class Operation {
   constructor(input, options, sequelize) {

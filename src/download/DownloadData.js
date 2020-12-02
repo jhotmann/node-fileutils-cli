@@ -3,12 +3,14 @@ const path = require('path');
 
 module.exports.DownloadData = class DownloadData {
   constructor(url) {
+    this.url = url;
     this.parsedPath = path.parse(path.basename(new URL(url).pathname));
     this.now = new Date();
   }
 
   async get() {
     return {
+      url: this.url,
       f: this.parsedPath.name,
       fileName: this.parsedPath.name,
       ext: this.parsedPath.ext,
@@ -29,6 +31,7 @@ module.exports.DownloadData = class DownloadData {
 
   getDescriptions() {
     return {
+      url: 'The url input',
       f: 'The original name of the file. Alias: fileName',
       ext: 'The original file extension of the file',
       date: {
