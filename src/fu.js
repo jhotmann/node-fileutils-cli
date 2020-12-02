@@ -22,10 +22,16 @@ module.exports = async (argv) => {
 
   if (argv.length === 0) argv = ['help'];
 
-  yargs(argv)
-    .usage(`FileUtils v${packageJson.version}\n\nUsage:\n  $0 <command>`)
-    .commandDir('./yargs')
-    .help('help')
-    .wrap(yargs.terminalWidth())
-    .argv;
+  return new Promise ((resolve, reject) => {
+    yargs()
+      .parserConfiguration({
+        "boolean-negation": false
+      })
+      .usage(`FileUtils v${packageJson.version}\n\nUsage:\n  $0 <command>`)
+      .commandDir('./yargs')
+      .help('help')
+      .wrap(yargs.terminalWidth())
+      .onFinishCommand(resolve)
+      .parse(argv);
+  });
 };

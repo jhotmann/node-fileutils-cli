@@ -54,6 +54,9 @@ module.exports.ListBatch = class ListBatch {
   }
 
   async resolvePaths() {
+    // if command is like: list -R somepath, then -R will be set to NaN and the path will not be included in argv.paths
+    if (isNaN(this.argv.recursive) && process.argv.length > (process.argv.indexOf('-R') + 1)) this.argv.paths.push(process.argv[process.argv.indexOf('-R') + 1]);
+    // normalize paths (switch \ to /)
     this.paths = await async.mapSeries(this.argv.paths || ['.'], async (p) => { return normalize(p); });
     // glob(s) to array of matching files
     this.resolvedPaths = await globby(this.paths, {

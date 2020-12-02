@@ -10,7 +10,7 @@ module.exports = {
     describe: 'Simulate and print operations'
   },
   n: {
-    alias: ['no-index'],
+    alias: ['no-index', 'noindex'],
     boolean: true,
     describe: 'Do not append an index when multiple operations result in the same path'
   },

@@ -85,7 +85,7 @@ module.exports.Operation = class Operation {
     if (this.inputFileString.toLowerCase() !== this.outputFileString.toLowerCase()) {
       this.alreadyExists = await fs.pathExists(this.outputFileString);
     }
-    if (this.alreadyExists && this.options.keep) {
+    if (this.alreadyExists && this.options.keep && !this.options.force) {
       let newFileName;
       let appender = 0;
       do {

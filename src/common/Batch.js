@@ -51,7 +51,7 @@ module.exports.Batch = class Batch {
         if (filteredOps.length === 1) { await filteredOps[i].setIndex(''); }
         // if there are multiple, append the index or put the index wherever {{i}}
         else { // going to have a file conflict
-          if (this.options.noIndex) {
+          if (this.options.noIndex || this.options.force) {
             await filteredOps[i].setIndex('');
             filteredOps[i].setConflict(true);
           } else { // set the index to avoid a conflict
