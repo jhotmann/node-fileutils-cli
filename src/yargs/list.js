@@ -43,6 +43,7 @@ exports.builder = (yargs) => {
         describe: 'Recursively calculate the size of all files within a directory'
       }
     })
+    .positional('paths', { type: 'string' })
     .version(false)
     .example('$0 ls', 'List the contents of the current directory')
     .example('$0 ls somedir -R 10 -Sr', 'Recursively list the contents of a subdirectory and sort files smallest to largest');

@@ -117,10 +117,17 @@ If no output path is specified, the file will be downloaded to the current direc
 -----
 
 ## Extract
+Etract zip, tar, gzip, and bzip archives.
+
 ### Usage
-`fileutils extract ...`
+`fileutils extract <archive file> [output directory]`
+
+The output directory is optional. If you don't specify an output directory, the archive will extract into a directory of the same name.
 
 ### Options
+`-s`, `--strip` - Remove the specified number of leading directories from the extracted files  
+`-f`, `--filter` - Filter out the specified file extensions from the output (separated by space)  
+`-v`, `--verbose` - Verbose logging
 
 -----
 
@@ -135,18 +142,21 @@ When you specify an ID or alias of a favorite, that command is instantly run. If
 -----
 
 ## Hash
+Get the hash(es) of one or more files.
+
 ### Usage
-`fileutils hash ...`
+`fileutils hash <files..>`
 
 ### Options
+`-c`, `--copy` - Copy the hash to the clipboard
 
 -----
 
 ## History
+View, undo, re-run, copy, and favorite past commands
+
 ### Usage
 `fileutils history`
-
-### Options
 
 -----
 
@@ -218,16 +228,23 @@ See [Filters and Examples](#filters-and-examples) for some examples of how to us
 -----
 
 ## Open
+Open files in their default application or an application of your choice
+
 ### Usage
-`fileutils open ...`
+`fileutils open <files..>`
 
 ### Options
+`-a`, `--app` - Open in the specified app instead of the default application
 
 -----
 
 ## Undo
+Undo the last undoable command that hasn't already been undone.
+
 ### Usage
 `fileutils undo`
+
+If you're unsure what the last command was that is undoable and hasn't already been undone, you're better off using `history` to view the commands and undo from there.
 
 -----
 

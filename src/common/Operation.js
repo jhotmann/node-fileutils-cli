@@ -127,7 +127,7 @@ ${operationText}
         if (this.options.verbose) console.log(`Skipping ${this.outputFileString.replace(this.currentDir, '')}`);
         return;
       }
-    } else if (!this.options.createDirs && !this.directoryExists) {
+    } else if (!this.options.createDirs && !this.directoryExists && !this.options.simulate) {
       console.log(chalk`{keyword('orange')
 ${operationText}
   WARNING: The directory does not exist!
@@ -146,8 +146,20 @@ ${operationText}
       const input = this.inputFileString.replace(/\\\[/g, '[').replace(/\\\]/g, ']');
       const output = this.outputFileString.replace(/\\\[/g, '[').replace(/\\\]/g, ']');
 
-      if (this.type === 'move') await fs.rename(input, output);
-      if (this.type === 'copy') await fs.copy(input, output);
+      switch (this.type) {
+        case 'move': {
+          await fs.rename(input, output);
+          break;
+        }
+        case 'copy': {
+          await fs.copy(input, output);
+          break;
+        }
+        default: {
+          console.log(chalk`{red ${this.type} not implemented yet!}`);
+          return;
+        }
+      }
 
       if (!this.options.noUndo && this.sequelize) { // write operations to database
         await this.sequelize.models.Op.create({
