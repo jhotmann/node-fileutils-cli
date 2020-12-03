@@ -117,7 +117,7 @@ If no output path is specified, the file will be downloaded to the current direc
 -----
 
 ## Extract
-Etract zip, tar, gzip, and bzip archives.
+Extract zip, tar, gzip, and bzip archives.
 
 ### Usage
 `fileutils extract <archive file> [output directory]`
@@ -163,10 +163,59 @@ View, undo, re-run, copy, and favorite past commands
 -----
 
 ## Link
+Create soft or hard links to one or more files.
+
 ### Usage
-`fileutils link ...`
+`fileutils link [options] [input-files..] [destination]`
+
+Or specify no options to launch an interactive terminal interface with live previews of the output(s) of your command.
+
+To save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
 
 ### Options
+`-f`, `--force`: Forcefully overwrite existing files and create missing directories  
+`-s`, `--soft`: Create a soft link instead of a hard link
+`-S`, `--sim`, `--dry-run`: Simulate and print operations without actually moving any files  
+`-n`, `--no-index`: Do not automatically append an index when multiple operations result in the same destination path  
+`-k`, `--keep`: Append a number to destination file name if the file already exists  
+`-d`, `--ignore-dirs`: Do not move/rename directories  
+`--sort`: Sort files before running operations. Choices: `none` (default), `alphabet`, `reverse-alphabet`, `date-create`, `reverse-date-create`, `date-modified`, `reverse-date-modified`, `size`, `reverse-size`  
+`-v`, `--verbose`: Verbose logging  
+`--no-trim`: Do not trim whitespace at beginning or end of destination file names  
+`--no-ext`: Do not automatically append the original file extension if an extension isn't supplied  
+`--create-dirs`: Automatically create missing directories  
+`--no-undo`: Don't write to command history   
+
+### Built-in Variables
+`{{i}}` - Override where the file index will go if there are multiple files being named the same name. By default, it is appended to the end of the file name.  
+`{{f}}` - The original name of the file. Alias: `fileName`  
+`{{ext}}` - The original file extension of the file  
+`{{isDirectory}}` - `true` if the current input is a directory, `false` otherwise  
+`{{p}}` - The name of the parent directory. Alias: `parent`  
+`{{date.current}}` - The current date/time. Alias: `date.now`  
+`{{date.create}}` - The date/time the file was created  
+`{{date.modify}}` - The date/time the file was last modified  
+`{{date.access}}` - The date/time the file was last accessed  
+`{{os.homedir}}` - The path to the current user's home directory  
+`{{os.platform}}` - The operating system platform: `darwin`, `linux`, or `windows`  
+`{{os.user}}` - The username of the current user  
+`{{guid}}` - A pseudo-random GUID  
+`{{stats}}` - All the input file's stats https://nodejs.org/api/fs.html#fs_class_fs_stats  
+`{{parsedPath}}` - The input file's parsed path https://nodejs.org/api/path.html#path_path_parse_path  
+`{{exif.iso}}` - The ISO sensitivity of the camera when the photo was taken  
+`{{exif.fnum}}` - The F-stop number of the camera when the photo was taken  
+`{{exif.exposure}}` - The exposure time of the camera when the photo was taken. Use the fraction filter to convert decimals to fractions  
+`{{exif.date}}` - The date on the camera when the photo was taken  
+`{{exif.width}}` - The pixel width of the photo  
+`{{exif.height}}` - The pixel height of the photo  
+`{{id3.title}}` - The title of the song  
+`{{id3.artist}}` - The artist of the song  
+`{{id3.album}}` - The album of the song  
+`{{id3.year}}` - The year of the song  
+`{{id3.track}}` - The track number of the song  
+`{{id3.totalTracks}}` - The number of tracks on the album  
+
+See [Filters and Examples](#filters-and-examples) for some examples of how to use filters and variables.
 
 -----
 

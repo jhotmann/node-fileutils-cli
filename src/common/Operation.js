@@ -40,7 +40,19 @@ module.exports.Operation = class Operation {
   }
 
   async parseOutputPath() {
-    this.outputFilePath = path.parse(path.resolve(this.outputString));
+    let resolved = path.resolve(this.outputString);
+    // check if existing directory
+    const exists = await fs.pathExists(resolved);
+    if (exists) {
+      const stats = await fs.lstat(resolved);
+      if (stats.isDirectory()) { // output is an existing directory, copy file into this directory with original file name
+        this.outputString = path.join(this.outputString, this.inputFilePath.base);
+        await this.parseOutputPath();
+        return;
+      }
+    }
+    // parse output path
+    this.outputFilePath = path.parse(resolved);
     if (!this.outputFilePath.ext && !this.options.noExt && this.inputFilePath.ext) {
       this.outputFilePath.ext = this.inputFilePath.ext;
     }
@@ -48,7 +60,7 @@ module.exports.Operation = class Operation {
       this.outputFilePath.dir = this.inputFilePath.dir;
     }
     let ext = this.outputFilePath.ext || '';
-    if (!ext && !this.options.noExt) { ext = this.inputFilePath.ext; }
+    if (!ext && !this.options.noExt) ext = this.inputFilePath.ext; // no extension specified, use original extension
     this.outputFileString = `${this.outputFilePath.dir}${path.sep}${this.outputFilePath.name}${ext}`;
     if (this.inputFileString.toLowerCase() !== this.outputFileString.toLowerCase()) {
       this.alreadyExists = await fs.pathExists(this.outputFileString);
@@ -153,6 +165,11 @@ ${operationText}
         }
         case 'copy': {
           await fs.copy(input, output);
+          break;
+        }
+        case 'link': {
+          if (this.options.soft) await fs.symlink(input, output);
+          else await fs.link(input, output);
           break;
         }
         default: {
