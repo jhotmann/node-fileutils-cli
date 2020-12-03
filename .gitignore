@@ -123,3 +123,8 @@ dist
 # testing directory
 test
 !src/test
+
+# build outputs
+build/chocolatey/fileutils-cli/fileutils-cli.nuspec
+build/chocolatey/fileutils-cli/tools/LICENSE.txt
+build/homebrew/fileutils-cli.rb

@@ -7,6 +7,8 @@ module.exports.Batch = class Batch {
     this.argv = argv;
     this.sequelize = sequelize;
     this.batchId;
+    this.options = {};
+    this.operations = [];
   }
 
   setCommand(commandString) {
@@ -25,7 +27,7 @@ module.exports.Batch = class Batch {
   }
 
   async sort() {
-    if (this.options.sort) { // sort files
+    if (this.options?.sort) { // sort files
       if (this.options.sort.includes('alphabet')) {
         this.operations = this.operations.sort((a,b) => {
           if (a.inputFileString < b.inputFileString) return -1;

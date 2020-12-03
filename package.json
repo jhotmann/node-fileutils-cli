@@ -12,7 +12,11 @@
     "cpy": "src/copy.js"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "pkg --out-path bin -t latest-macos-x64,latest-linux-x64 .",
+    "build-win": "pkg --out-path bin -t latest-win-x64 .",
+    "chocolatey": "node build/packager-win.js",
+    "homebrew": "node build/packager-mac.js"
   },
   "keywords": [
     "cli",
@@ -58,5 +62,13 @@
     "eslint": "^7.14.0",
     "eslint-plugin-jest": "^24.1.3",
     "jest": "^26.6.3"
+  },
+  "pkg": {
+    "assets": [
+      "lib/userData.js",
+      "lib/userFilters.js",
+      "node_modules/terminal-kit/**/*",
+      "node_modules/open/xdg-open"
+    ]
   }
 }

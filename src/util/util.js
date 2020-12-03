@@ -1,7 +1,17 @@
+const crypto = require('crypto');
+const fs = require('fs-extra');
 const traverse = require('traverse');
 const { FileData } = require('../common/FileData');
 
 module.exports = {};
+
+module.exports.fileHash = (path, algorithm) => new Promise((resolve, reject) => {
+	const hash = crypto.createHash(algorithm);
+	const rs = fs.createReadStream(path);
+	rs.on('error', reject);
+	rs.on('data', chunk => hash.update(chunk));
+	rs.on('end', () => resolve(hash.digest('hex')));
+});
 
 module.exports.leftPad = function(input, desiredLength, padChar) {
   padChar = padChar || ' ';
@@ -11,32 +21,6 @@ module.exports.leftPad = function(input, desiredLength, padChar) {
     returnString = padChar + returnString;
   }
   return returnString;
-};
-
-module.exports.argvToString = function(argv) {
-  let returnString = '';
-  let args = argv;
-  if (argv[0].match(/.*[/\\]node(.exe)?$/)) {
-    args = argv.slice(2);
-    returnString += 'rename ';
-  }
-  for (const component of args) {
-    returnString += `${component.match(/.*[ |].*/) ? '"' : ''}${component}${component.match(/.*[ |].*/) ? '"' : ''} `;
-  }
-  return returnString.trim();
-};
-
-module.exports.yargsArgvToString = function(argv) {
-  let filesArr = argv._.map(function(value) { return escapeText(value); });
-  let command = (process.platform === 'win32' ? 'rname' : 'rename') + 
-    (argv.f ? ' -f' : '') +
-    (argv.noindex ? ' -n' : '') +
-    (argv.d ? ' -d' : '') +
-    (argv.v ? ' -v' : '') +
-    (argv.createdirs ? ' --createdirs' : '') +
-    (argv.nomove ? ' --nomove' : '') + ' ' +
-    filesArr.join(' ');
-  return command;
 };
 
 module.exports.getVariableList = function () {

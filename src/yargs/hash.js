@@ -1,7 +1,6 @@
 const async = require('async');
 const clipboardy = require('clipboardy');
-const crypto = require('crypto');
-const fs = require('fs-extra');
+const util = require('../util/util');
 
 module.exports.command = 'hash <files..>';
 module.exports.aliases = ['md5', 'sha1', 'sha256', 'sha512'];
@@ -24,16 +23,8 @@ exports.builder = (yargs) => {
 exports.handler = async function (argv) {
   const algorithm = argv._[0] === 'hash' ? 'md5': argv._[0];
   await async.eachSeries(argv.files, async (f) => {
-    const hash = await fileHash(f, algorithm);
+    const hash = await util.fileHash(f, algorithm);
     console.log(`${hash}${argv.files.length > 1 ? `  ${f}` : ''}`);
     if (argv.copy) await clipboardy.write(hash);
   });
 };
-
-const fileHash = (path, algorithm) => new Promise((resolve, reject) => {
-	const hash = crypto.createHash(algorithm);
-	const rs = fs.createReadStream(path);
-	rs.on('error', reject);
-	rs.on('data', chunk => hash.update(chunk));
-	rs.on('end', () => resolve(hash.digest('hex')));
-});
