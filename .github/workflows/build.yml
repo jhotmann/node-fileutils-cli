@@ -65,7 +65,7 @@ jobs:
     - run: npm ci
     - run: npm i -g pkg
     - run: npm run-script build-win --if-present
-    - run: dir bin\
+    - run: dir build\bin\
     - run: npm run-script package-win --if-present
     - run: dir build\chocolatey\fileutils-cli\tools\
     - name: Choco package
@@ -75,7 +75,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: exe
-        path: bin\*.exe
+        path: build\bin\*.exe
     - run: dir
     - uses: actions/upload-artifact@v2
       with:
