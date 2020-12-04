@@ -66,7 +66,7 @@ jobs:
     - run: npm i -g pkg
     - run: npm run-script build-win --if-present
     - run: dir bin\
-    - run: npm run-script chocolatey --if-present
+    - run: npm run-script package-win --if-present
     - run: dir build\chocolatey\fileutils-cli\tools\
     - name: Choco package
       uses: crazy-max/ghaction-chocolatey@v1
@@ -97,7 +97,7 @@ jobs:
     - run: npm pack
     - run: npm i -g pkg
     - run: npm run-script build --if-present
-    - run: npm run-script homebrew --if-present
+    - run: npm run-script package-mac --if-present
     - uses: actions/upload-artifact@v2
       with:
         name: unix-binaries

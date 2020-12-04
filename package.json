@@ -14,9 +14,9 @@
   "scripts": {
     "test": "jest",
     "build": "pkg --out-path bin -t latest-macos-x64,latest-linux-x64 .",
-    "build-win": "pkg --out-path bin -t latest-win-x64 .",
-    "chocolatey": "node build/packager-win.js",
-    "homebrew": "node build/packager-mac.js"
+    "build-win": "pkg --out-path build/bin -t latest-win-x64 .",
+    "package-win": "node build/packager-win.js",
+    "package-mac": "node build/packager-mac.js"
   },
   "keywords": [
     "cli",
