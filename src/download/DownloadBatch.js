@@ -1,3 +1,4 @@
+const async = require('async');
 const chalk = require('chalk');
 const database = require('../util/database');
 const download = require('download');
@@ -22,10 +23,31 @@ module.exports.DownloadBatch = class DownloadBatch {
     this.inputFilePath = path.parse(path.basename(this.url.pathname));
     this.fileData = new DownloadData(this.url.toString());
     this.progressBar;
+    this.headers = {};
+    this.timeout = {};
+    if (argv.timeout) this.timeout = argv.timeout * 1000;
+  }
+
+  async parseHeaders() {
+    let headersArr = [];
+    if (this.argv.hasOwnProperty('header')) {
+      if (typeof this.argv.header === 'string') headersArr.push(this.argv.header);
+      else headersArr = this.argv.header;
+    }
+    await async.eachSeries(headersArr, async (h) => {
+      if (h.indexOf(':') > -1) {
+        const name = h.split(':')[0].trim();
+        const value = h.split(':')[1].trim();
+        this.headers[name] = value;
+      } else if (!this.argv.quiet) {
+        console.log(chalk`{red Invalid header format ${h}, name and value must be split by ':'}`);
+      }
+    });
   }
 
   async init() {
     this.sequelize = await database.init();
+    await this.parseHeaders();
     await this.replaceVariables();
     await this.parseOutputPath();
   }
@@ -43,11 +65,16 @@ module.exports.DownloadBatch = class DownloadBatch {
   }
 
   async execute() {
-    await download(this.url.toString(), this.outputFilePath.dir, {
+    let options = {
       filename: this.outputFilePath.base,
       retry: this.argv.tries,
-      maxRedirects: this.argv.maxRedirects
-    })
+      maxRedirects: this.argv.maxRedirects,
+      headers: this.headers,
+      timeout: this.timeout
+    };
+    if (this.argv.user) options.username = this.argv.user;
+    if (this.argv.pass) options.password = this.argv.pass;
+    await download(this.url.toString(), this.outputFilePath.dir, options)
     .on('response', res => {
       if (this.argv.verbose) console.log(`${res.url} - ${res.statusCode}`);
       const len = parseInt(res.headers['content-length'], 10) || 1;
@@ -61,7 +88,7 @@ module.exports.DownloadBatch = class DownloadBatch {
       }
     })
     .on('downloadProgress', progress => {
-      if (!this.argv.quiet) this.progressBar.update(progress?.percent ?? 1);
+      if (!this.argv.quiet && this.progressBar) this.progressBar.update(progress?.percent ?? 1);
     })
     .catch(err => {
       console.log(chalk`{red ${err}}`);

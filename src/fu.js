@@ -1,8 +1,11 @@
 const fs = require('fs-extra');
 const os = require('os');
+const updateNotifier = require('update-notifier');
 const yargs = require('yargs');
 
 const packageJson = require('../package.json');
+
+updateNotifier({ pkg: packageJson, updateCheckInterval: 1000 * 60 * 60 * 24 * 7 }).notify({ isGlobal: true });
 
 module.exports = async (argv) => {
   // create ~/.fu/userData.js if not exist

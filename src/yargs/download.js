@@ -16,11 +16,31 @@ exports.builder = (yargs) => {
         default: 20,
         describe: 'Number of retries. To disable retries, set to 0'
       },
+      T: {
+        alias: 'timeout',
+        number: true,
+        describe: 'Set the timeout in seconds'
+      },
       'max-redirect': {
         alias: 'max-redirects',
         number: true,
         default: 20,
         describe: 'The maximum number of redirections to follow for a resource'
+      },
+      h: {
+        alias: 'header',
+        string: true,
+        describe: 'Specify a header value like: "header-name: header value"'
+      },
+      'http-user': {
+        alias: 'user',
+        string: true,
+        describe: 'Basic auth user'
+      },
+      'http-passwd': {
+        alias: 'pass',
+        string: true,
+        describe: 'Basic auth password'
       },
       q: {
         alias: 'quiet',
