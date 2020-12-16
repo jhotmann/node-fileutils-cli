@@ -10,7 +10,7 @@ module.exports.aliases = ['l', 'ln', 'mklink'];
 module.exports.describe = 'Create soft or hard links to one or more files';
 
 const commonOptions = require('../common/yargs-options');
-const moveOptions = {
+const commandOptions = {
   s: {
     alias: 'soft',
     boolean: true,
@@ -22,18 +22,20 @@ const moveOptions = {
     describe: 'Simulate and print operations'
   }
 };
+const options = Object.assign(commonOptions, commandOptions);
+module.exports.options = options;
 
 exports.builder = (yargs) => {
   yargs
-    .options(Object.assign(commonOptions, moveOptions))
+    .options(options)
     .version(false)
     .epilogue('Variables:\n\n' + util.getVariableList())
     .example('$0 -s /mnt/extra_storage/myfile.config myconfig.config');
 };
 
 exports.handler = async function (argv) {
+  const sequelize = await database.init();
   if (argv.inputFilesAndDestination && argv.inputFilesAndDestination.length > 1) {
-    const sequelize = await database.init();
     const options = new LinkOptions(argv);
     await options.validateInputFiles();
     if (options.inputFiles.length > 0 && options.outputPattern) {
@@ -43,7 +45,7 @@ exports.handler = async function (argv) {
       console.log(chalk`{red ERROR: None of the input files specified exist}`);
     }
   } else if (!argv.inputFilesAndDestination || argv.inputFilesAndDestination.length === 0) {
-    console.log('TODO');
+    await require('../common/TerminalUI')('link', sequelize);
   } else {
     console.log(chalk`{red ERROR: Not enough arguments specified. Type fileutils move --help for help}`);
   }

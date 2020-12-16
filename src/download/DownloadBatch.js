@@ -1,13 +1,17 @@
 const async = require('async');
 const chalk = require('chalk');
 const database = require('../util/database');
-const download = require('download');
 const fs = require('fs-extra');
+const got = require('got');
 const nunjucks = require('../util/nunjucks');
 const path = require('path');
 const ProgressBar = require('progress');
+const {promisify} = require('util');
+const stream = require('stream');
 const {URL} = require('url');
 const { DownloadData } = require('./DownloadData');
+
+const pipeline = promisify(stream.pipeline);
 
 module.exports.DownloadBatch = class DownloadBatch {
   constructor(argv) {
@@ -65,19 +69,23 @@ module.exports.DownloadBatch = class DownloadBatch {
   }
 
   async execute() {
+    const finalPath = path.format(this.outputFilePath);
     let options = {
-      filename: this.outputFilePath.base,
+      isStream: true,
       retry: this.argv.tries,
       maxRedirects: this.argv.maxRedirects,
-      headers: this.headers,
-      timeout: this.timeout
+      timeout: this.timeout,
+      headers: this.headers
     };
     if (this.argv.user) options.username = this.argv.user;
     if (this.argv.pass) options.password = this.argv.pass;
-    await download(this.url.toString(), this.outputFilePath.dir, options)
-    .on('response', res => {
+    await fs.mkdirp(this.outputFilePath.dir);
+    const downloadStream = got(this.url.toString(), options);
+    const fileWriterStream = fs.createWriteStream(finalPath);
+    downloadStream.on('response', res => {
       if (this.argv.verbose) console.log(`${res.url} - ${res.statusCode}`);
       const len = parseInt(res.headers['content-length'], 10) || 1;
+      if (len < 1000) return;
       if (!this.argv.quiet && !this.progressBar) {
         this.progressBar = new ProgressBar('  downloading [:bar] :rate/Kbps :percent :etas', {
           complete: '=',
@@ -86,14 +94,16 @@ module.exports.DownloadBatch = class DownloadBatch {
           total: len/1024
         });
       }
-    })
-    .on('downloadProgress', progress => {
+    }).on('downloadProgress', progress => {
       if (!this.argv.quiet && this.progressBar) this.progressBar.update(progress?.percent ?? 1);
-    })
-    .catch(err => {
-      console.log(chalk`{red ${err}}`);
-      process.exit(1);
     });
+    try {
+      await pipeline(downloadStream, fileWriterStream);
+    } catch (e) {
+      console.log(chalk`{red An error occurred: ${e}}`);
+      process.exit(1);
+    }
+    if (this.argv.verbose) console.log(`\nFile downloaded to ${finalPath.replace(process.cwd() + path.sep, '')}`);
     if (!this.argv.quiet) console.log('');
     if (this.argv.verbose) console.log(`${this.outputFilePath.base} → ${this.outputFileString.replace(`${process.cwd()}${path.sep}`, '')}`);
     const sequelize = await database.init();

@@ -17,18 +17,20 @@ const moveOptions = {
     describe: 'Do not move files if their new file path points to a different directory'
   }
 };
+const options = Object.assign(commonOptions, moveOptions);
+module.exports.options = options;
 
 exports.builder = (yargs) => {
   yargs
-    .options(Object.assign(commonOptions, moveOptions))
+    .options(options)
     .version(false)
     .epilogue('Variables:\n\n' + util.getVariableList())
     .example('$0 *.txt "archive/{{date.now|date}}-{{f}}" --createdirs');
 };
 
 exports.handler = async function (argv) {
+  const sequelize = await database.init();
   if (argv.inputFilesAndDestination && argv.inputFilesAndDestination.length > 1) {
-    const sequelize = await database.init();
     const options = new MoveOptions(argv);
     await options.validateInputFiles();
     if (options.inputFiles.length > 0 && options.outputPattern) {
@@ -38,7 +40,7 @@ exports.handler = async function (argv) {
       console.log(chalk`{red ERROR: None of the input files specified exist}`);
     }
   } else if (!argv.inputFilesAndDestination || argv.inputFilesAndDestination.length === 0) {
-    console.log('TODO');
+    await require('../common/TerminalUI')('move', sequelize);
   } else {
     console.log(chalk`{red ERROR: Not enough arguments specified. Type fileutils move --help for help}`);
   }
