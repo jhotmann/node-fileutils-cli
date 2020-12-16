@@ -40,7 +40,7 @@ Alias a sub-command as a global command. Since existing commands vary by OS, you
 ### Usage
 `fileutils alias <subcommand> <command>`
 
-*Note: you will need to run this command with appropriate privileges. If you're on Windows, run in an elevated cmd or PowerShell window. On Unix, sudo if necessary.*
+*Note: on Windows, you will need to remove aliases manually if you uninstall FileUtils.*
 
 -----
 
