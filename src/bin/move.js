@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('./fu')(['move', ...process.argv.slice(2)]);
+require('../fu')(['move', ...process.argv.slice(2)]);

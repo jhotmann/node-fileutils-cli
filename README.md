@@ -16,6 +16,7 @@ This project is the continuation of [Rename-CLI](https://github.com/jhotmann/nod
 
 | Command | Alias(es) | Description |
 | ----- | ----- | ----- |
+| [alias](#alias) | a | alias a sub-command as a global command |
 | [copy](#copy) | c, cp, cpy | copy one or more files/directories to a destination (with variable support) |
 | [download](#download) | d, dl, get | download a file from the internet (with variable support) |
 | [extract](#extract) | e, unzip, gunzip, tar | extract zip, tar, gzip, and bzip archives |
@@ -33,6 +34,16 @@ This project is the continuation of [Rename-CLI](https://github.com/jhotmann/nod
 ## Installation
 TODO
 
+## Alias
+Alias a sub-command as a global command. Since existing commands vary by OS, you can create global aliases for individual sub-commands on your own. For instance, on Windows there is no `mv` command so you can simply run `fileutils alias move mv` and move/rename files via `mv` like you would on Unix.
+
+### Usage
+`fileutils alias <subcommand> <command>`
+
+*Note: you will need to run this command with appropriate privileges. If you're on Windows, run in an elevated cmd or PowerShell window. On Unix, sudo if necessary.*
+
+-----
+
 ## Copy
 Copy one or more files/directories with variable support.
 
@@ -41,9 +52,7 @@ Copy one or more files/directories with variable support.
 
 Or specify no options to launch an interactive terminal interface with live previews of the output(s) of your command.
 
-*Note: when you install FileUtils, an alias will be created that directly run the copy command. This alias is `cpy`, so you can simply type `cpy [options] [inputfiles..] [destination]` without needing to specify `fileutils` first.*
-
-To further save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
+To save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
 
 ### Options
 `-f`, `--force`: Forcefully overwrite existing files and create missing directories  
@@ -227,9 +236,7 @@ Move/rename one or more files/directories with variable support.
 
 Or specify no options to launch an interactive terminal interface with live previews of the output(s) of your command.
 
-*Note: when you install FileUtils, two aliases will be created that directly run the move command. These aliases are `rname` and `rename`, so you can simply type `rname [options] [inputfiles..] [destination]` without needing to specify `fileutils` first.*
-
-To further save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
+To save you keystrokes, if the destination name/pattern does not contain a file extension the original file extension will be preserved. Also, you can specify the `--create-dirs` option to automatically create any missing directories.
 
 ### Options
 `-f`, `--force`: Forcefully overwrite existing files and create missing directories  
@@ -295,7 +302,7 @@ Undo the last undoable command that hasn't already been undone.
 ### Usage
 `fileutils undo`
 
-If you're unsure what the last command was that is undoable and hasn't already been undone, you're better off using `history` to view the commands and undo from there.
+If you're unsure what the last command was that is undoable and hasn't already been undone, you're better off using [history](#history) to view the commands and undo from there.
 
 -----
 

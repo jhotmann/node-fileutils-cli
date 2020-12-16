@@ -6,10 +6,7 @@
   "preferGlobal": true,
   "bin": {
     "fileutils": "bin.js",
-    "fu": "bin.js",
-    "rename": "src/move.js",
-    "rname": "src/move.js",
-    "cpy": "src/copy.js"
+    "fu": "bin.js"
   },
   "scripts": {
     "test": "jest",
@@ -39,6 +36,7 @@
     "date-fns": "^2.16.1",
     "decompress": "^4.2.1",
     "fs-extra": "^9.0.1",
+    "global-prefix": "^3.0.0",
     "globby": "^11.0.0",
     "got": "^11.8.1",
     "inquirer": "^7.1.0",
