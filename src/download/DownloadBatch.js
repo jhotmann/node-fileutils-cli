@@ -50,7 +50,7 @@ module.exports.DownloadBatch = class DownloadBatch {
   }
 
   async init() {
-    this.sequelize = await database.init();
+    if (!this.argv.noundo) this.sequelize = await database.init();
     await this.parseHeaders();
     await this.replaceVariables();
     await this.parseOutputPath();
@@ -106,14 +106,15 @@ module.exports.DownloadBatch = class DownloadBatch {
     if (this.argv.verbose) console.log(`\nFile downloaded to ${finalPath.replace(process.cwd() + path.sep, '')}`);
     if (!this.argv.quiet) console.log('');
     if (this.argv.verbose) console.log(`${this.outputFilePath.base} → ${this.outputFileString.replace(`${process.cwd()}${path.sep}`, '')}`);
-    const sequelize = await database.init();
-    let batch = sequelize.models.Batch.build({ type: 'download', undoable: true, command: process.argv.slice(2), cwd: process.cwd() });
-    await batch.save();
-    await sequelize.models.Op.create({
-      type: 'download',
-      input: this.argv.url,
-      output: this.outputFileString,
-      BatchId: batch.id
-    });
+    if (this.sequelize && !this.argv.noundo) {
+      let batch = this.sequelize.models.Batch.build({ type: 'download', undoable: true, command: process.argv.slice(2), cwd: process.cwd() });
+      await batch.save();
+      await this.sequelize.models.Op.create({
+        type: 'download',
+        input: this.argv.url,
+        output: this.outputFileString,
+        BatchId: batch.id
+      });
+    }
   }
 };

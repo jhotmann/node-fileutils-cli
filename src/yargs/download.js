@@ -50,6 +50,11 @@ exports.builder = (yargs) => {
       v: {
         alias: 'verbose',
         boolean: true
+      },
+      'noundo': {
+        alias: 'no-undo',
+        boolean: true,
+        describe: 'Don\'t write to command history'
       }
     })
     .version(false)

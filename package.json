@@ -67,7 +67,8 @@
       "lib/userData.js",
       "lib/userFilters.js",
       "node_modules/terminal-kit/**/*",
-      "node_modules/open/xdg-open"
+      "node_modules/open/xdg-open",
+      "src/**/*"
     ]
   }
 }
