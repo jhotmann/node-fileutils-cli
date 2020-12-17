@@ -1,8 +1,7 @@
 const async = require('async');
 const fs = require('fs-extra');
 const path = require('path');
-
-const fu = require('../fu');
+const util = require('../util/util');
 
 const commandName = 'copy';
 const testDir = 'test/copy';
@@ -21,9 +20,10 @@ describe(`Copy a single file: ${commandName} ${testDir}/one.txt ${testDir}/one-c
   const newFiles = [`${testDir}/one-copied.txt`];
   let originalContent;
   beforeAll(async () => {
+    await util.ensureFiles(oldFiles);
     await fs.writeFile(`${testDir}/one.txt`, `This is the first test`);
     originalContent = await fs.readFile(`${testDir}/one.txt`, 'utf8');
-    await runCommand(`${commandName} ${testDir}/one.txt ${testDir}/one-copied.txt`);
+    await util.runCommand(`${commandName} ${testDir}/one.txt ${testDir}/one-copied.txt`);
   });
   test(`Old files do exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -38,11 +38,3 @@ describe(`Copy a single file: ${commandName} ${testDir}/one.txt ${testDir}/one-c
     expect(result).toBe(originalContent);
   });
 });
-
-// HELPER FUNCTIONS
-
-async function runCommand(command, undo) {
-  undo = undo || false;
-  if (!undo) command += ' --noundo';
-  await fu(command);
-}

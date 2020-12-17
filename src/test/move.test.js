@@ -2,8 +2,7 @@ const async = require('async');
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-
-const fu = require('../fu');
+const util = require('../util/util');
 
 jest.setTimeout(30000);
 
@@ -27,9 +26,9 @@ describe('Rename a single file: rename test/move/one.txt test/move/one-renamed.t
   const newFiles = ['test/move/one-renamed.txt'];
   let originalContent;
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
+    await util.ensureFiles(oldFiles);
     originalContent = await fs.readFile('test/move/one.txt', 'utf8');
-    await runCommand('rename test/move/one.txt test/move/one-renamed.txt');
+    await util.runCommand('rename test/move/one.txt test/move/one-renamed.txt');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -49,8 +48,8 @@ describe('Rename multiple files the same thing with appended index: rename test/
   const oldFiles = ['test/move/four.txt', 'test/move/five.txt', 'test/move/fourteen.txt', 'test/move/fifteen.txt'];
   const newFiles = ['test/move/multiple1.txt', 'test/move/multiple2.txt', 'test/move/multiple3.txt', 'test/move/multiple4.txt'];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand('rename test/move/f*.txt test/move/multiple');
+    await util.ensureFiles(oldFiles);
+    await util.runCommand('rename test/move/f*.txt test/move/multiple');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -68,7 +67,7 @@ describe('Rename multiple files the same thing with appended index and file exte
   let originalContent;
   beforeAll(async () => {
     originalContent = await fs.readFile('test/move/twelve.txt', 'utf8');
-    await runCommand('rename --sort reverse-alphabet test/move/multiple* test/move/twelve.txt test/move/multiple.log');
+    await util.runCommand('rename --sort reverse-alphabet test/move/multiple* test/move/twelve.txt test/move/multiple.log');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -88,8 +87,8 @@ describe('Rename with variables and filters: rename test/move/two.txt "test/{{p}
   const oldFiles = ['test/move/two.txt'];
   const newFiles = ['test/move/TWO.testingStuff'];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand(`rename test/move/two.txt "test/{{p}}/{{f|upper}}.{{'testing-stuff'|camel}}"`);
+    await util.ensureFiles(oldFiles);
+    await util.runCommand(`rename test/move/two.txt "test/{{p}}/{{f|upper}}.{{'testing-stuff'|camel}}"`);
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -109,8 +108,8 @@ describe('Force multiple files to be renamed the same: rename test/move/th* test
   const oldFiles = ['test/move/three.txt', 'test/move/thirteen.txt'];
   const newFiles = ['test/move/same.txt'];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand('rename test/move/th* test/move/same --no-index --force');
+    await util.ensureFiles(oldFiles);
+    await util.runCommand('rename test/move/th* test/move/same --no-index --force');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -130,8 +129,8 @@ describe('Multiple files to be renamed the same but with keep option: rename tes
   const oldFiles = ['test/move/six.txt', 'test/move/sixteen.txt'];
   const newFiles = ['test/move/keep.txt', 'test/move/keep-1.txt'];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand('rename test/move/six* test/move/keep --no-index -k');
+    await util.ensureFiles(oldFiles);
+    await util.runCommand('rename test/move/six* test/move/keep --no-index -k');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -147,7 +146,7 @@ describe('Move a file to a new directory: rename test/move/one-renamed.txt "test
   const oldFiles = ['test/move/one-renamed.txt'];
   const newFiles = [`test/move/another-dir/${os.platform()}.txt`];
   beforeAll(async () => {
-    await runCommand('rename test/move/one-renamed.txt "test/move/another-dir/{{os.platform}}"');
+    await util.runCommand('rename test/move/one-renamed.txt "test/move/another-dir/{{os.platform}}"');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -163,8 +162,8 @@ describe(`Don't move a file to a new directory: rename test/move/eight.txt "test
   const oldFiles = ['test/move/eight.txt'];
   const newFiles = ['test/move/eight-notmoved.txt'];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand('rename test/move/eight.txt "test/move/another-dir/{{f}}-notmoved" --nomove');
+    await util.ensureFiles(oldFiles);
+    await util.runCommand('rename test/move/eight.txt "test/move/another-dir/{{f}}-notmoved" --nomove');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -182,8 +181,8 @@ describe(`Rename multiple files to the same date and append index: rename --nomo
   const oldFiles = ['test/move/seven.txt', 'test/move/seventeen.txt'];
   const newFiles = [`test/move/${nowFormatted}1.txt`, `test/move/${nowFormatted}2.txt`];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand(`rename --nomove test/move/seven* "{{date.current|date('yyyy-MM-dd')}}"`);
+    await util.ensureFiles(oldFiles);
+    await util.runCommand(`rename --nomove test/move/seven* "{{date.current|date('yyyy-MM-dd')}}"`);
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -199,8 +198,8 @@ describe(`Test --noext option: rename test/move/ten.txt "test/move/asdf{{os.user
   const oldFiles = ['test/move/ten.txt'];
   const newFiles = [`test/move/asdf${os.userInfo().username}`];
   beforeAll(async () => {
-    await ensureFiles(oldFiles);
-    await runCommand('rename test/move/ten.txt "test/move/asdf{{os.user}}" --noext', true);
+    await util.ensureFiles(oldFiles);
+    await util.runCommand('rename test/move/ten.txt "test/move/asdf{{os.user}}" --noext', true);
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -217,7 +216,7 @@ describe(`Rename a mp3 file: rename test/move/music.mp3 --create-dirs "test/move
   const newFiles = ['test/move/2019/Scott Holmes/04 - Upbeat Party.mp3'];
   beforeAll(async () => {
     await fs.copyFile('src/test/test_files/Scott_Holmes_-_04_-_Upbeat_Party.mp3', 'test/move/music.mp3');
-    await runCommand('rename test/move/music.mp3 --createdirs "test/move/{{id3.year}}/{{id3.artist}}/{{id3.track|padNumber(2)}} - {{id3.title}}{{ext}}"');
+    await util.runCommand('rename test/move/music.mp3 --createdirs "test/move/{{id3.year}}/{{id3.artist}}/{{id3.track|padNumber(2)}} - {{id3.title}}{{ext}}"');
   });
   test(`Old files don't exist`, async () => {
     const result = await async.every(oldFiles, async (f) => { return await fs.pathExists(path.resolve(f)); });
@@ -230,12 +229,6 @@ describe(`Rename a mp3 file: rename test/move/music.mp3 --create-dirs "test/move
 });
 
 // HELPER FUNCTIONS
-
-async function runCommand(command, undo) {
-  undo = undo || false;
-  if (!undo) command += ' --noundo';
-  await fu(command);
-}
 
 /* eslint-disable eqeqeq */
 function inWords (num) {
@@ -251,10 +244,4 @@ function inWords (num) {
   str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
   str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
   return str;
-}
-
-async function ensureFiles(files) {
-  await async.each(files, async (f) => {
-    await fs.ensureFile(f);
-  });
 }

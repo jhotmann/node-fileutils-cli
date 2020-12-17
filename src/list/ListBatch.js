@@ -16,6 +16,15 @@ module.exports.ListBatch = class ListBatch {
     };
     this.paths = [];
     this.resolvedPaths = [];
+    this.operations = [];
+    this.outputText = '';
+  }
+
+  async test() {
+    await this.resolvePaths();
+    await this.buildOperations();
+    await this.caluclateDirectorySizes();
+    await this.sortOperations();
   }
 
   async execute() {

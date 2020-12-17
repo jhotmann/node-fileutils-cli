@@ -1,5 +1,7 @@
+const async = require('async');
 const crypto = require('crypto');
 const fs = require('fs-extra');
+const fu = require('../fu');
 const traverse = require('traverse');
 const { FileData } = require('../common/FileData');
 
@@ -65,9 +67,14 @@ module.exports.humanReadableSize = (bytes) => {
   return '0B';
 };
 
-function escapeText(theString) {
-  if (theString.indexOf(' ') > -1 || theString.indexOf('|') > -1) {
-    return '"' + theString + '"';
-  }
-  return theString;
-}
+module.exports.runCommand = async function(command, undo) {
+  undo = undo || false;
+  if (!undo) command += ' --noundo';
+  await fu(command);
+};
+
+module.exports.ensureFiles = async function(files) {
+  await async.each(files, async (f) => {
+    await fs.ensureFile(f);
+  });
+};
