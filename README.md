@@ -1,4 +1,4 @@
-# **WIP** FileUtils-CLI **WIP**
+# FileUtils-CLI
 A cross-platform collection of command line tools for file interactions
 
 This project is the continuation of [Rename-CLI](https://github.com/jhotmann/node-rename-cli) to provide powerful, file-interaction tools with a unified syntax across platforms.
@@ -10,6 +10,8 @@ This project is the continuation of [Rename-CLI](https://github.com/jhotmann/nod
 - Ability to save commands as favorites to re-run them quickly
 - Customize by adding your own variables and filters
 - Auto-indexing when moving/copying multiple files to the same file name
+
+-----
 
 ## Usage
 `fileutils [command] [command options]`
@@ -29,16 +31,53 @@ This project is the continuation of [Rename-CLI](https://github.com/jhotmann/nod
 | [open](#open) | o, launch, start | open files in their default application or an application of your choice |
 | [undo](#undo) | u | undo the last undoable command that hasn't already been undone |
 
-*To save yourself some keystrokes, the `fileutils` command can also be run via the `fu` alias. Additionally, shortcuts to the move and copy commands are created: `rname`, `rename`, and `cpy`. These allow you to bypass the need to type `fu` or `fileutils` to run those commands.*
+*To save yourself some keystrokes, the `fileutils` command can also be run via the `fu` alias. Additionally, shortcuts to any of the sub-commands can be created via the [alias](#alias) command. These allow you to bypass the need to type `fu` or `fileutils` to run aliased commands.*
+
+-----
 
 ## Installation
-TODO
+The preferred methods of installation are via [NPM](https://www.npmjs.com/) or [Homebrew](https://brew.sh/).
+
+**NPM**
+
+First install [NodeJS](https://nodejs.org/) via [package manager](https://nodejs.org/en/download/package-manager/), [NVM](https://github.com/nvm-sh/nvm), or other preferred method. Then run the following in an elevated command/PowerShell window or with sudo (if necessary):
+
+```sh
+npm i -g fileutils-cli
+```
+
+**Homebrew:**
+
+```
+Coming Soon
+```
+
+<!--```sh
+brew tap jhotmann/fileutils-cli
+brew install fileutils-cli
+```-->
+
+If you don't want to install Node, the **untested** binary versions can be downloaded from the [Releases](https://github.com/jhotmann/node-fileutils-cli/releases) page or via [Chocolatey](https://chocolatey.org/).
+
+**Chocolatey:**
+
+```sh
+Coming Soon
+```
+
+<!--```sh
+choco install fileutils-cli
+```-->
+
+-----
 
 ## Alias
-Alias a sub-command as a global command. Since existing commands vary by OS, you can create global aliases for individual sub-commands on your own. For instance, on Windows there is no `mv` command so you can simply run `fileutils alias move mv` and move/rename files via `mv` like you would on Unix.
+Alias a sub-command as a global command. Since existing commands vary by OS, you can create global aliases for individual sub-commands on your own. For instance, on Windows there is no `mv` command so you can simply run `fileutils alias move mv` and move/rename files via `mv` like you would on Unix. ***This only works if installed via NPM or Homebrew.***
 
 ### Usage
 `fileutils alias <subcommand> <command>`
+
+Where `subcommand` is the command in FileUtils (`move`, `copy`, `download`, etc), and `command` is the alias you would like to create.
 
 *Note: on Windows, you will need to remove aliases manually if you uninstall FileUtils.*
 
@@ -373,7 +412,7 @@ test/eleven.txt → Eleven.txt
 `padNumber(length)` - put leading zeroes in front of a number until it is `length` digits long. If `length` is a string, it will use the string's length.
 
 ```sh
-rename Absent\ Sounds/* "{{id3.year}}/{{id3.artist}}/{{id3.album}}/{{ id3.track | padNumber(id3.totalTracks) }} - {{id3.title}}{{ext}}"
+rename --create-dirs "Absent Sounds/*" "{{id3.year}}/{{id3.artist}}/{{id3.album}}/{{ id3.track | padNumber(id3.totalTracks) }} - {{id3.title}}{{ext}}"
 
 Absent Sounds/Am I Alive.mp3 → 2014/From Indian Lakes/Absent Sounds/05 - Am I Alive.mp3
 Absent Sounds/Awful Things.mp3 → 2014/From Indian Lakes/Absent Sounds/07 - Awful Things.mp3
@@ -398,7 +437,7 @@ The first time you run the rename command a file will be created at `~/.fu/userD
 // All the built-in nodejs libraries are also available
 // const exif = require('jpeg-exif'); // https://github.com/zhso/jpeg-exif
 // const fs = require('fs-extra'); // https://github.com/jprichardson/node-fs-extra
-// const n2f = require('num2fraction'); // https://github.com/yisibl/num2fraction
+// const Fraction = require('fraction.js'); // https://github.com/infusion/Fraction.js
 // const date-fns = require('date-fns'); // https://date-fns.org/
 
 module.exports = function(fileObj, descriptions) {
@@ -499,7 +538,7 @@ Each filter should accept a parameter that contains the value of the variable pa
 // All the built-in nodejs libraries are also available
 // const exif = require('jpeg-exif'); // https://github.com/zhso/jpeg-exif
 // const fs = require('fs-extra'); // https://github.com/jprichardson/node-fs-extra
-// const n2f = require('num2fraction'); // https://github.com/yisibl/num2fraction
+// const Fraction = require('fraction.js'); // https://github.com/infusion/Fraction.js
 // const { format } = require('date-fns'); // https://date-fns.org/
 
 module.exports = {

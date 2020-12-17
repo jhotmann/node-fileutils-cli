@@ -90,17 +90,17 @@ module.exports = async function(commandName, sequelize) {
     const theCommand = `${COMMAND_NAME} ${input}`;
     switch (COMMAND_NAME) {
       case 'copy': {
-        const argv = yargs.command(copyCommand.command).alias({ copy: copyCommand.aliases }).options(copyCommand.options).parse(theCommand);
+        const argv = yargs.parserConfiguration({ "boolean-negation": false }).command(copyCommand.command).alias({ copy: copyCommand.aliases }).options(copyCommand.options).parse(theCommand);
         BATCH = new CopyBatch(argv, null, SEQUELIZE);
         break;
       }
       case 'link': {
-        const argv = yargs.command(linkCommand.command).alias({ copy: linkCommand.aliases }).options(linkCommand.options).parse(theCommand);
+        const argv = yargs.parserConfiguration({ "boolean-negation": false }).command(linkCommand.command).alias({ copy: linkCommand.aliases }).options(linkCommand.options).parse(theCommand);
         BATCH = new LinkBatch(argv, null, SEQUELIZE);
         break;
       }
       default: {
-        const argv = yargs.command(moveCommand.command).alias({ move: moveCommand.aliases }).options(moveCommand.options).parse(theCommand);
+        const argv = yargs.parserConfiguration({ "boolean-negation": false }).command(moveCommand.command).alias({ move: moveCommand.aliases }).options(moveCommand.options).parse(theCommand);
         BATCH = new MoveBatch(argv, null, SEQUELIZE);
       }
     }

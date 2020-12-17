@@ -1,7 +1,6 @@
 const fs = require('fs-extra');
 const yargs = require('yargs');
 const { ListBatch } = require('../list/ListBatch');
-const util = require('../util/util');
 
 const listCommand = require('../yargs/list');
 
@@ -23,7 +22,7 @@ beforeAll(async () => {
 describe('List directory contents', () => {
   let batch;
   beforeAll(async () => {
-    const argv = yargs.command(listCommand.command).options(listCommand.options).parse(`${commandName} ${testDir}`);
+    const argv = yargs.parserConfiguration({ "boolean-negation": false }).command(listCommand.command).options(listCommand.options).parse(`${commandName} ${testDir}`);
     batch = new ListBatch(argv);
     await batch.test();
   });
