@@ -24,7 +24,7 @@ module.exports.FileData = class FileData {
   async get() {
     let exifData = getExifData(this.parsedPath.dir + '/' + this.parsedPath.base);
     let tags = {};
-    if (!this.stats.isDirectory()) {
+    if (!this.stats.isDirectory() && this.parsedPath.ext.toLowerCase() === '.mp3') {
       const buffer = await fs.readFile(this.parsedPath.dir + '/' + this.parsedPath.base);
       const mp3tag = new MP3Tag(buffer, false);
       await mp3tag.read();
