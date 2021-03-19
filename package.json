@@ -45,7 +45,7 @@
     "mp3tag.js": "^2.2.0",
     "normalize-path": "^3.0.0",
     "nunjucks": "^3.2.2",
-    "open": "^7.3.0",
+    "open": "^8.0.3",
     "path-exists": "^4.0.0",
     "progress": "^2.0.3",
     "readline-sync": "^1.4.10",
