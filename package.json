@@ -39,7 +39,7 @@
     "fs-extra": "^9.0.1",
     "global-prefix": "^3.0.0",
     "globby": "^11.0.0",
-    "got": "^11.8.1",
+    "got": "^12.0.4",
     "inquirer": "^7.1.0",
     "jpeg-exif": "^1.1.4",
     "mp3tag.js": "^2.2.0",
