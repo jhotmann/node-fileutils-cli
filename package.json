@@ -40,7 +40,7 @@
     "global-prefix": "^3.0.0",
     "globby": "^11.0.0",
     "got": "^11.8.1",
-    "inquirer": "^7.1.0",
+    "inquirer": "^9.0.2",
     "jpeg-exif": "^1.1.4",
     "mp3tag.js": "^2.2.0",
     "normalize-path": "^3.0.0",
